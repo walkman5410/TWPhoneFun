@@ -24,9 +24,9 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = 'django-insecure-ptc@k4pgm)t3)e8809crq*x4rf!e+a!7#9!vps3-u7#w-p!7^z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.86.113', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['twphonefun.herokuapp.com']
 
 
 # Application definition
