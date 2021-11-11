@@ -34,7 +34,7 @@ def create_race(request):
                 'start_long': request.POST.get('start_long'),
                 'end_lat': request.POST.get('end_lat'),
                 'end_long': request.POST.get('end_long'),   
-                'location_offset': 1/(111.111/(0.0003048 * request.POST.get('location_offset')))        
+                'location_offset': 1/(111.111/(0.0003048 * float(request.POST.get('location_offset'))))        
             }
         )
     else:
