@@ -1,13 +1,8 @@
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+from django.shortcuts import render
+from django.http import JsonResponse
 from django.utils import timezone
 from django.views import generic
-from django.core.mail import send_mail
-from django.core.mail import EmailMessage
 from django.conf import settings
-from django.db.models import Sum
-from collections import defaultdict
 
 from .forms import TickerForm
 
