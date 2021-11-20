@@ -1,0 +1,159 @@
+{% extends 'eightpillars/base.html' %}
+{% load humanize %}
+{% load formatit %}
+
+{% block content %}
+<div id="mainview">
+    {% if eightpillardata %}
+        <div style="left:0; position:absolute;">
+            <fieldset><legend>FILTER</legend>
+            <p><label for="peck"><input type="checkbox" id="peck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">PE</span></label> </p>
+            <p><label for="pmck"><input type="checkbox" id="pmck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">PROFIT MARGIN</span></label> </p>
+            <p><label for="revck"><input type="checkbox" id="revck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">REVENUE GROWTH</span></label> </p>
+            <p><label for="prock"><input type="checkbox" id="prock" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">PROFIT GROWTH</span></label> </p>
+            <p><label for="shck"><input type="checkbox" id="shck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">SHARES OUTSTANDING</span></label> </p>
+            <p><label for="quck"><input type="checkbox" id="quck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">QUICK RATIO</span></label> </p>
+            <p><label for="fcfck"><input type="checkbox" id="fcfck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">FREE CASH FLOW</span></label> </p>
+            <p><label for="afcfck"><input type="checkbox" id="afcfck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">AFCFV VS MARKET CAP</span></label>
+            </fieldset>
+        </div>
+        <div id="countdiv">
+        </div>
+        {% for obj in eightpillardata %}
+            <table style="border: 2px solid black; display:block;" 
+                class="
+                    {% if obj.is_pe_acceptable %}
+                    peck 
+                    {% endif %}
+                    {% if obj.are_shares_outstanding_shrinking %}
+                    shck 
+                    {% endif %}
+                    {% if obj.is_profit_margin_acceptable %}
+                    pmck 
+                    {% endif %}
+                    {% if obj.is_quick_ratio_positive %}
+                    quck 
+                    {% endif %}
+                    {% if obj.is_revenue_growing %}
+                    revck 
+                    {% endif %}
+                    {% if obj.is_cash_flow_growing %}
+                    fcfck 
+                    {% endif %}
+                    {% if obj.is_net_income_growing %}
+                    prock 
+                    {% endif %}
+                    {% if obj.is_market_price_worth %}
+                    afcfck 
+                    {% endif %}
+                "
+            >
+                <tr>
+                    <th colspan=6><a href="https://www.tradingview.com/chart/?symbol={{obj.ticker}}"  target="_blank" rel="noopener noreferrer">Company: {{obj.company_name}} ({{obj.ticker}}) <i style="font-size: 10px;">last updated: {{obj.last_updated}}</i></a></th>
+                </tr>
+                <tr>
+                    <th>PE (<20)</th>
+                    <td>{{obj.Pe}}</td>
+                    <td>{% if obj.is_pe_acceptable %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+                    <th>Shares Outstanding Reduced</th>
+                    <td>Current: {{obj.shares_outstanding|intcomma}} 4 years ago: {{obj.earliest_shares_outstanding|intcomma}}</td>
+                    <td>{% if obj.are_shares_outstanding_shrinking %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+                </tr>
+                <tr>
+                    <th>Profit Margin > 10%</th>
+                    <td>{{obj.profit_margin|to_percent:0}}</td>
+                    <td>{% if obj.is_profit_margin_acceptable %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}</td>
+                    <th>Quick Ratio</th>
+                    <td>{{obj.quick_ratio|to_percent:0}}</td>
+                    <td>{% if obj.is_quick_ratio_positive %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}        
+                </tr>
+                <tr>
+                    <th>Revenue Growth (4 years)</th>
+                    <td>Current: {{obj.latest_revenue|intcomma}} 4 years ago: {{obj.earliest_revenue|intcomma}}</td>
+                    <td>{% if obj.is_revenue_growing %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+                    <th>Free Cash Flow</th>
+                    <td>
+                        Current: {{obj.latest_free_cash_flow|intcomma}} 
+                        4 years ago: {{obj.earliest_free_cash_flow|intcomma}} 
+                        <br /> 
+                        4 year avg: {{obj.average_cash_flow|intcomma}}                    
+                    </td>    
+                    <td>{% if obj.is_cash_flow_growing %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}               
+                </tr>
+                <tr>
+                    <th>Profit Growth (4 years)</th>
+                    <td>Current: {{obj.latest_net_income|intcomma}} 4 years ago: {{obj.earliest_net_income|intcomma}}</td>        
+                    <td>{% if obj.is_net_income_growing %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+                    <th>4 year Average Free Cash Flow * 20 <br />compared to Market Cap</th>
+                    <td>AFCF Value: {{obj.cash_flow_value|intcomma}} <br /> vs Market Cap: {{obj.market_cap|intcomma}}</td>     
+                    <td>{% if obj.is_market_price_worth %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}                
+                </tr>  
+            </table>
+        {% endfor %}
+        <script>
+            $(document).ready(function(){
+                $("#countdiv").html("Results: "+countResults());
+            })
+            var checkboxes = document.querySelectorAll("input[type=checkbox]");
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    if (checkifallunchecked()){
+                        //if none are checked unhide all
+                        document.querySelectorAll('table').forEach(function(tbls){
+                            tbls.style.display = 'block';
+                        });      
+                        $("#countdiv").html("Results: "+countResults());
+                    } else {
+                        //check which ones are checked
+                        clsChecked = new Array();
+                        clsChecked = checkwhicharechecked();
+                        //hide all tables
+                        document.querySelectorAll('table').forEach(function(tbls){
+                            tbls.style.display = 'none';
+                        });
+                        //reveal checked ones
+                        document.querySelectorAll("."+clsChecked.join('.')).forEach(function(tblChecked){
+                            tblChecked.style.display = 'block';
+                        });
+                        $("#countdiv").html("Results: "+countResults());
+                    }
+                })
+            });     
+            function checkwhicharechecked(){
+                var clsArr = new Array();
+                var checkboxes = document.querySelectorAll("input[type=checkbox]");
+                checkboxes.forEach(function(checkbox) {
+                    if (checkbox.checked) {
+                        clsArr.push(checkbox.id);
+                    }
+                })
+                return clsArr;                
+            }
+            function checkifallunchecked(){
+                var response = true;
+                var checkboxes = document.querySelectorAll("input[type=checkbox]");
+                checkboxes.forEach(function(checkbox) {
+                    if (checkbox.checked) {
+                        response = false;
+                    }
+                })
+                return response;
+            }     
+            function countResults(){
+                var i=0;
+                document.querySelectorAll('table').forEach(function(val){
+                    if(val.style.display=='block'){
+                        i = i+1;
+                    }
+                })
+                return i;
+            }
+        </script>
+    {% else %}
+        <tr>
+            <td>{{message}}</td>
+        </tr>
+    {% endif %}
+</div>
+
+{% endblock %}

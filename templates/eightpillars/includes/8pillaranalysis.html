@@ -1,0 +1,38 @@
+<div id="tickerformdiv">
+    {{tickerform.as_p}}
+    <button id="tickerBTN" onclick="getThePillars(event);" class="btn waves-effect waves-light" type="submit" name="action">Get Pillar Data
+        <i class="material-icons right">send</i>
+    </button>
+    <div id="8pillardiv">
+
+    </div>
+</div>
+<script>
+    $("#id_ticker").keyup(function(event) {
+        if (event.keyCode === 13) {
+            $("#tickerBTN").click();
+        }
+    });
+    function getThePillars(event) {
+        event.preventDefault();
+        if($('#id_ticker').val() == ''){
+            alert('Enter a Ticker');
+            $('#id_ticker').focus();
+            return
+        }
+        $('#8pillardiv').html('Loading....');
+        $.ajax({
+            url: '{% url "eightpillars:get_the_pillar_table" %}',
+            data: {
+                tickerSymbol: $('#id_ticker').val()
+            },
+            timeout: 120000,
+            success: function (data) {
+                $('#8pillardiv').html(data);
+            },
+            error: function(){
+                $('#8pillardiv').html("There was an error getting data.");
+            }
+        });
+    };
+</script>

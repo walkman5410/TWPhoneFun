@@ -1,0 +1,55 @@
+{% load humanize %}
+{% load formatit %}
+
+<table style="border: 2px solid black;">
+    <tr>
+        <th colspan=6><a href="https://www.tradingview.com/chart/?symbol={{ticker}}"  target="_blank" rel="noopener noreferrer">Company: {{company_name}} ({{ticker}})</a></th>
+    </tr>
+    <tr>
+        <th>PE (<20)</th>
+        <td>{{Pe}}</td>
+        <td>{% if is_pe_acceptable %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+        <th>Shares Outstanding Reduced</th>
+        <td>Current: {{shares_outstanding|intcomma}} 4 years ago: {{earliest_shares_outstanding|intcomma}}</td>
+        <td>{% if are_shares_outstanding_shrinking %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+    </tr>
+    <tr>
+        <th>Profit Margin > 10%</th>
+        <td>{{profit_margin}}</td>
+        <td>{% if is_profit_margin_acceptable %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}</td>
+        <th>Quick Ratio</th>
+        <td>{{quick_ratio|to_percent:0}}</td>
+        <td>{% if is_quick_ratio_positive %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}        
+    </tr>
+    <tr>
+        <th>Revenue Growth (4 years)</th>
+        <td>Current: {{latest_revenue|intcomma}} 4 years ago: {{earliest_revenue|intcomma}}</td>
+        <td>{% if is_revenue_growing %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+        <th>Free Cash Flow</th>
+        <td>
+            Current: {{latest_free_cash_flow|intcomma}} 
+            4 years ago: {{earliest_free_cash_flow|intcomma}} 
+            <br /> 
+            4 year avg: {{average_cash_flow|intcomma}}                    
+        </td>    
+        <td>{% if is_cash_flow_growing %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}               
+    </tr>
+    <tr>
+        <th>Profit Growth (4 years)</th>
+        <td>Current: {{latest_net_income|intcomma}} 4 years ago: {{earliest_net_income|intcomma}}</td>        
+        <td>{% if is_net_income_growing %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}           
+        <th>4 year Average Free Cash Flow * 20 <br />compared to Market Cap</th>
+        <td>AFCF Value: {{cash_flow_value|intcomma}} <br /> vs Market Cap: {{market_cap|intcomma}}</td>     
+        <td>{% if is_market_price_worth %}<i class="material-icons dp48">check_circle</i>{% else %}<i class="material-icons dp48">clear</i>{% endif %}                
+    </tr>  
+</table>
+
+<p>8 PILLAR ANALYSIS TABLE</p>
+<p>1. PE ratio < 20 (Market Cap / Earnings)</p>
+<p>2. Profit margin > 10% (NI post tax/ Revenue)</p>
+<p>3. Revenue growth (past 5 years)</p>
+<p>4. Profit growth (past 5 years)</p>
+<p>5. Number of shares outstanding (decreasing or same)</p>
+<p>6. Current assets > Current liabilities</p>
+<p>7. Free cash flow (cash from ops - capex)</p>
+<p>8. FCF = NOI < 20 (past 5 years)</p>

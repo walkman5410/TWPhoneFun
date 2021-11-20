@@ -1,0 +1,7 @@
+<!--<form id="login-form" action="https://twphonefun.herokuapp.com/raceday/login" method="POST">-->
+<form id="login-form" action="http://192.168.86.113:8000/raceday/login_raceday" method="POST">
+    {% csrf_token %}
+    <input type="text" placeholder="Enter Username" name="username" />
+    <input type="password" placeholder="Enter Password" name="password" />
+    <input type='button' id="login-btn" class="ui-btn" value="LOGIN" />
+</form>
