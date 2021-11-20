@@ -3,8 +3,9 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views import generic
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 
 from .forms import TickerForm
@@ -300,3 +301,51 @@ def get_the_pillar_table(request):
     else:
         data['message'] = 'You did not give me the Ticker DUMB DUMB'
     return render(request, 'eightpillars/functions/8pillartable.html', data)
+
+@login_required
+@permission_required('eightpillars.add_eightpillardata')
+def add_eightpillar_data(request):
+    data = {}
+    status = 201
+    if request.method == 'POST':
+        json_data = request.data['eightpillar_data']
+        dl = json.loads(json_data)
+        for pillar_data in dl:
+            try:
+                ticker, created = EightPillarData.objects.get_or_create(ticker=dl[pillar_data]['ticker'])
+                ticker.company_name = dl[pillar_data]['company_name']
+                ticker.market_cap = dl[pillar_data]['market_cap']
+                ticker.Eps = dl[pillar_data]['Eps']
+                ticker.Pe = dl[pillar_data]['Pe']
+                ticker.is_pe_acceptable = dl[pillar_data]['is_pe_acceptable']
+                ticker.profit_margin = dl[pillar_data]['profit_margin']
+                ticker.is_profit_margin_acceptable = dl[pillar_data]['is_profit_margin_acceptable']
+                ticker.latest_revenue = dl[pillar_data]['latest_revenue']
+                ticker.earliest_revenue = dl[pillar_data]['earliest_revenue']
+                ticker.is_revenue_growing = dl[pillar_data]['is_revenue_growing']
+                ticker.latest_net_income = dl[pillar_data]['latest_net_income']
+                ticker.earliest_net_income = dl[pillar_data]['earliest_net_income']
+                ticker.is_net_income_growing = dl[pillar_data]['is_net_income_growing']
+                ticker.latest_shares_outstanding = dl[pillar_data]['latest_shares_outstanding']
+                ticker.earliest_shares_outstanding = dl[pillar_data]['earliest_shares_outstanding']
+                ticker.shares_outstanding = dl[pillar_data]['shares_outstanding']
+                ticker.are_shares_outstanding_shrinking = dl[pillar_data]['are_shares_outstanding_shrinking']
+                ticker.quick_ratio = dl[pillar_data]['quick_ratio']
+                ticker.is_quick_ratio_positive = dl[pillar_data]['is_quick_ratio_positive']
+                ticker.is_cash_flow_growing = dl[pillar_data]['is_cash_flow_growing']
+                ticker.latest_free_cash_flow = dl[pillar_data]['latest_free_cash_flow']
+                ticker.earliest_free_cash_flow = dl[pillar_data]['earliest_free_cash_flow']
+                ticker.average_cash_flow = dl[pillar_data]['average_cash_flow']
+                ticker.is_dividend_yield_affordable = dl[pillar_data]['is_dividend_yield_affordable']
+                ticker.cash_flow_value = dl[pillar_data]['cash_flow_value']
+                ticker.is_market_price_worth = dl[pillar_data]['is_market_price_worth']
+                ticker.last_updated = timezone.now()
+                ticker.save()
+            except:
+                status = 500
+                data['message'] = 'There was an error with one of the records.'
+    else:
+        status = 500
+        data['message'] = 'There was an error loading the data.'
+    
+    return JsonResponse(data, status=status)

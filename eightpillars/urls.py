@@ -17,4 +17,5 @@ urlpatterns = [
     #Functions
     re_path(r'^get_the_pillars', views.get_the_pillars, name='get_the_pillars'),
     re_path(r'^get_the_pillar_table', views.get_the_pillar_table, name='get_the_pillar_table'),    
+    re_path(r'^add_eightpillar_data', views.add_eightpillar_data, name='add_eightpillar_data'),
 ]
