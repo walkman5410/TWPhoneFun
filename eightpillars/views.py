@@ -3,6 +3,9 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views import generic
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 from .forms import TickerForm
 
@@ -15,7 +18,7 @@ import requests
 import json
 from lxml import etree 
 
-class HomePage(generic.TemplateView):
+class HomePage(LoginRequiredMixin, generic.TemplateView):
     template_name = 'eightpillars/index.html'
 
     def get_context_data(self, **kwargs):
@@ -23,6 +26,7 @@ class HomePage(generic.TemplateView):
         context['tickerform'] = TickerForm()
         return context
 
+@login_required
 def view_all_eight_pillar_winner_data(request):
     data ={}
     try:
@@ -42,6 +46,7 @@ def view_all_eight_pillar_winner_data(request):
         data['message'] = 'There was an error'
     return render(request, 'eightpillars/includes/all8pillartable.html', data)
 
+@login_required
 def view_all_eight_pillar_data(request):
     data ={}
     try:
@@ -50,6 +55,7 @@ def view_all_eight_pillar_data(request):
         data['message'] = 'There was an error'
     return render(request, 'eightpillars/includes/all8pillartable.html', data)
 
+@login_required
 def get_the_pillars(request):
     data = {}
     status = 200
@@ -171,6 +177,7 @@ def get_the_pillars(request):
         status = 500
     return JsonResponse(data, status=status)
 
+@login_required
 def get_the_pillar_table(request):
     data = {}
     if request.method == 'GET':

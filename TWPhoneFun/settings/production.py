@@ -28,7 +28,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['twphonefun.herokuapp.com']
 
-
+LOGIN_REDIRECT_URL = 'eightpillars:homepage'
+LOGIN_URL = '/login/'
 # Application definition
 
 INSTALLED_APPS = [
