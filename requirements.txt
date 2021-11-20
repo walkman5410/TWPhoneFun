@@ -51,3 +51,4 @@ webencodings==0.5.1
 websockets==8.1
 yahoo-fin
 yfinance
+whitenoise

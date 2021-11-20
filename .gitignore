@@ -7,6 +7,12 @@ db.sqlite3
 media
 local.py
 base.py
+/staticfiles/admin
+/staticfiles/css
+/staticfiles/django_extensions
+/staticfiles/js
+/staticfiles/rest_framework
+staticfiles.json
 
 
 # Backup files # 
