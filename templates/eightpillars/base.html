@@ -21,6 +21,9 @@
                 <ul id="nav-mobile" class="right">
                     <li><a href="{% url 'eightpillars:homepage' %}">VIEW SINGLE TICKER</a></li>
                     <li><a href="{% url 'eightpillars:view_all_eight_pillar_data' %}">VIEW ALL</a></li>
+                    {% if request.user.is_superuser %}
+                        <li><a href="{% url 'eightpillars:view_upload_form' %}">UPLOAD DATA</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>

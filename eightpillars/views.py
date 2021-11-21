@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 
-from .forms import TickerForm
+from .forms import TickerForm, UploadForm
 
 from .models import EightPillarData
 
@@ -18,6 +18,10 @@ import pandas as pd
 import requests
 import json
 from lxml import etree 
+
+import logging
+
+logger = logging.getLogger('django')
 
 class HomePage(LoginRequiredMixin, generic.TemplateView):
     template_name = 'eightpillars/index.html'
@@ -52,9 +56,20 @@ def view_all_eight_pillar_data(request):
     data ={}
     try:
         data['eightpillardata'] = EightPillarData.objects.filter(last_updated__gte = timezone.now() - timezone.timedelta(days=10))
-    except:
+    except Exception as e:
+        logger.error(e)
         data['message'] = 'There was an error'
     return render(request, 'eightpillars/includes/all8pillartable.html', data)
+
+@login_required
+def view_upload_form(request):
+    data = {}
+    try:
+        data['upload_form'] = UploadForm()
+    except Exception as e:
+        logger.error(e)
+        data['message'] = "There was an error"
+    return render(request, 'eightpillars/includes/upload_data.html', data)
 
 @login_required
 def get_the_pillars(request):
@@ -111,7 +126,8 @@ def get_the_pillars(request):
             json_data = json.loads(json_str)        
             latest_shares_outstanding = json_data['context']['dispatcher']['stores']['QuoteTimeSeriesStore']['timeSeries']['annualShareIssued'][3]['reportedValue']['raw']  
             earliest_shares_outstanding = json_data['context']['dispatcher']['stores']['QuoteTimeSeriesStore']['timeSeries']['annualShareIssued'][0]['reportedValue']['raw']  
-        except:
+        except Exception as e:
+            logger.error(e)
             latest_shares_outstanding = None
             earliest_shares_outstanding = None
             
@@ -139,7 +155,8 @@ def get_the_pillars(request):
             average_cash_flow = free_cash_flow/4
             cash_flow_minus_dividend = average_cash_flow - dividendsPaid if dividendsPaid else average_cash_flow
             cash_flow_value = average_cash_flow * 20
-        except:
+        except Exception as e:
+            logger.error(e)
             latest_free_cash_flow = None
             earliest_free_cash_flow = None
             average_cash_flow = None
@@ -174,6 +191,7 @@ def get_the_pillars(request):
         data['cash_flow_value'] = int(cash_flow_value) if cash_flow_value else None
         data['is_market_price_worth'] = bool(market_cap < cash_flow_value) if cash_flow_value else None   
     else:
+        logger.error('No ticker')
         data['message'] = 'You didnt give me the Ticker DUMB DUMB'
         status = 500
     return JsonResponse(data, status=status)
@@ -238,7 +256,8 @@ def get_the_pillar_table(request):
         latest_shares_outstanding = int(df.iloc[[-1]]['sharesOutstanding']) 
         try:
             earliest_shares_outstanding = int(df.iloc[[-21]]['sharesOutstanding'])    
-        except IndexError:
+        except IndexError as e:
+            logger.error(e)
             earliest_shares_outstanding = 0
 
         #Current Assets over Current Liabilities
@@ -264,7 +283,8 @@ def get_the_pillar_table(request):
             average_cash_flow = free_cash_flow/4
             cash_flow_minus_dividend = average_cash_flow - dividendsPaid if dividendsPaid else average_cash_flow
             cash_flow_value = average_cash_flow * 20
-        except:
+        except Exception as e:
+            logger.error(e)
             latest_free_cash_flow = None
             earliest_free_cash_flow = None
             average_cash_flow = None
@@ -299,6 +319,7 @@ def get_the_pillar_table(request):
         data['cash_flow_value'] = int(cash_flow_value) if cash_flow_value else None
         data['is_market_price_worth'] = bool(market_cap < cash_flow_value) if cash_flow_value else None        
     else:
+        logger.error('No Ticker')
         data['message'] = 'You did not give me the Ticker DUMB DUMB'
     return render(request, 'eightpillars/functions/8pillartable.html', data)
 
@@ -307,44 +328,52 @@ def get_the_pillar_table(request):
 def add_eightpillar_data(request):
     data = {}
     status = 201
-    if request.method == 'POST':
-        json_data = request.data['eightpillar_data']
-        dl = json.loads(json_data)
-        for pillar_data in dl:
-            try:
-                ticker, created = EightPillarData.objects.get_or_create(ticker=dl[pillar_data]['ticker'])
-                ticker.company_name = dl[pillar_data]['company_name']
-                ticker.market_cap = dl[pillar_data]['market_cap']
-                ticker.Eps = dl[pillar_data]['Eps']
-                ticker.Pe = dl[pillar_data]['Pe']
-                ticker.is_pe_acceptable = dl[pillar_data]['is_pe_acceptable']
-                ticker.profit_margin = dl[pillar_data]['profit_margin']
-                ticker.is_profit_margin_acceptable = dl[pillar_data]['is_profit_margin_acceptable']
-                ticker.latest_revenue = dl[pillar_data]['latest_revenue']
-                ticker.earliest_revenue = dl[pillar_data]['earliest_revenue']
-                ticker.is_revenue_growing = dl[pillar_data]['is_revenue_growing']
-                ticker.latest_net_income = dl[pillar_data]['latest_net_income']
-                ticker.earliest_net_income = dl[pillar_data]['earliest_net_income']
-                ticker.is_net_income_growing = dl[pillar_data]['is_net_income_growing']
-                ticker.latest_shares_outstanding = dl[pillar_data]['latest_shares_outstanding']
-                ticker.earliest_shares_outstanding = dl[pillar_data]['earliest_shares_outstanding']
-                ticker.shares_outstanding = dl[pillar_data]['shares_outstanding']
-                ticker.are_shares_outstanding_shrinking = dl[pillar_data]['are_shares_outstanding_shrinking']
-                ticker.quick_ratio = dl[pillar_data]['quick_ratio']
-                ticker.is_quick_ratio_positive = dl[pillar_data]['is_quick_ratio_positive']
-                ticker.is_cash_flow_growing = dl[pillar_data]['is_cash_flow_growing']
-                ticker.latest_free_cash_flow = dl[pillar_data]['latest_free_cash_flow']
-                ticker.earliest_free_cash_flow = dl[pillar_data]['earliest_free_cash_flow']
-                ticker.average_cash_flow = dl[pillar_data]['average_cash_flow']
-                ticker.is_dividend_yield_affordable = dl[pillar_data]['is_dividend_yield_affordable']
-                ticker.cash_flow_value = dl[pillar_data]['cash_flow_value']
-                ticker.is_market_price_worth = dl[pillar_data]['is_market_price_worth']
-                ticker.last_updated = timezone.now()
-                ticker.save()
-            except:
-                status = 500
-                data['message'] = 'There was an error with one of the records.'
+    if request.method == 'POST' and request.user.is_superuser:
+        if 'json_file' in request.FILES:
+            json_data = request.FILES['json_file']
+            dl = json.loads(json_data.read()) 
+            for pillar_data in dl:
+                try:
+                    ticker, created = EightPillarData.objects.get_or_create(ticker=dl[pillar_data]['ticker'])
+                    ticker.company_name = dl[pillar_data]['company_name']
+                    ticker.market_cap = dl[pillar_data]['market_cap']
+                    ticker.Eps = dl[pillar_data]['Eps']
+                    ticker.Pe = dl[pillar_data]['Pe']
+                    ticker.is_pe_acceptable = dl[pillar_data]['is_pe_acceptable']
+                    ticker.profit_margin = dl[pillar_data]['profit_margin']
+                    ticker.is_profit_margin_acceptable = dl[pillar_data]['is_profit_margin_acceptable']
+                    ticker.latest_revenue = dl[pillar_data]['latest_revenue']
+                    ticker.earliest_revenue = dl[pillar_data]['earliest_revenue']
+                    ticker.is_revenue_growing = dl[pillar_data]['is_revenue_growing']
+                    ticker.latest_net_income = dl[pillar_data]['latest_net_income']
+                    ticker.earliest_net_income = dl[pillar_data]['earliest_net_income']
+                    ticker.is_net_income_growing = dl[pillar_data]['is_net_income_growing']
+                    ticker.latest_shares_outstanding = dl[pillar_data]['latest_shares_outstanding']
+                    ticker.earliest_shares_outstanding = dl[pillar_data]['earliest_shares_outstanding']
+                    ticker.shares_outstanding = dl[pillar_data]['shares_outstanding']
+                    ticker.are_shares_outstanding_shrinking = dl[pillar_data]['are_shares_outstanding_shrinking']
+                    ticker.quick_ratio = dl[pillar_data]['quick_ratio']
+                    ticker.is_quick_ratio_positive = dl[pillar_data]['is_quick_ratio_positive']
+                    ticker.is_cash_flow_growing = dl[pillar_data]['is_cash_flow_growing']
+                    ticker.latest_free_cash_flow = dl[pillar_data]['latest_free_cash_flow']
+                    ticker.earliest_free_cash_flow = dl[pillar_data]['earliest_free_cash_flow']
+                    ticker.average_cash_flow = dl[pillar_data]['average_cash_flow']
+                    ticker.is_dividend_yield_affordable = dl[pillar_data]['is_dividend_yield_affordable']
+                    ticker.cash_flow_value = dl[pillar_data]['cash_flow_value']
+                    ticker.is_market_price_worth = dl[pillar_data]['is_market_price_worth']
+                    ticker.last_updated = timezone.now()
+                    ticker.save()
+                except Exception as e:
+                    logger.error(e)
+                    status = 500
+                    data['message'] = 'There was an error with one of the records.'
+            data['message'] = 'Upload Successful.'
+        else:
+            logger.error('Missing the data')
+            status = 500
+            data['message'] = 'Invalid Request.'
     else:
+        logger.error('It was not a post or no permissions for: ' + request.user)
         status = 500
         data['message'] = 'There was an error loading the data.'
     

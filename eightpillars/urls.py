@@ -10,6 +10,7 @@ urlpatterns = [
     re_path(r'^$', views.HomePage.as_view(), name="homepage"),
     re_path(r'^view_all_eight_pillar_data$', views.view_all_eight_pillar_data, name="view_all_eight_pillar_data"),
     re_path(r'^view_all_eight_pillar_winner_data$', views.view_all_eight_pillar_winner_data, name="view_all_eight_pillar_winner_data"),
+    re_path(r'^view_upload_form$', views.view_upload_form, name="view_upload_form"),
 
     re_path(r'^login/$', auth_views.LoginView.as_view(), name='login'),
     re_path(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
