@@ -43,3 +43,11 @@ th,
 td {
     color: black;
 }
+.filter-div {
+    left:0; 
+    position:absolute;    
+}
+.eight-pillar-table {
+    border: 2px solid black; 
+    display:block;    
+}

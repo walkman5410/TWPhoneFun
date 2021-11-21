@@ -5,7 +5,7 @@
 {% block content %}
 <div id="mainview">
     {% if eightpillardata %}
-        <div style="left:0; position:absolute;">
+        <div class="filter-div">
             <fieldset><legend>FILTER</legend>
             <p><label for="peck"><input type="checkbox" id="peck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">PE</span></label> </p>
             <p><label for="pmck"><input type="checkbox" id="pmck" class="filled-in" style="display:none;" /><span class="blue-text text-darken-2">PROFIT MARGIN</span></label> </p>
@@ -20,8 +20,8 @@
         <div id="countdiv">
         </div>
         {% for obj in eightpillardata %}
-            <table style="border: 2px solid black; display:block;" 
-                class="
+            <table 
+                class="eight-pillar-table
                     {% if obj.is_pe_acceptable %}
                     peck 
                     {% endif %}
