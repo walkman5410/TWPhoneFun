@@ -332,6 +332,7 @@ def add_eightpillar_data(request):
         if 'json_file' in request.FILES:
             json_data = request.FILES['json_file']
             dl = json.loads(json_data.read()) 
+            data['message'] = 'The Uploader Started...'
             for pillar_data in dl:
                 try:
                     ticker, created = EightPillarData.objects.get_or_create(ticker=dl[pillar_data]['ticker'])
@@ -366,8 +367,8 @@ def add_eightpillar_data(request):
                 except Exception as e:
                     logger.error(e)
                     status = 500
-                    data['message'] = 'There was an error with one of the records.'
-            data['message'] = 'Upload Successful.'
+                    data['message'] += 'There was an error with one of the records.'
+            data['message'] += 'Upload Successful.'
         else:
             logger.error('Missing the data')
             status = 500
