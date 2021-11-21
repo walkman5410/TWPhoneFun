@@ -336,32 +336,32 @@ def add_eightpillar_data(request):
             for pillar_data in dl:
                 try:
                     ticker, created = EightPillarData.objects.get_or_create(ticker=dl[pillar_data]['ticker'])
-                    ticker.company_name = dl[pillar_data]['company_name'] if 'company_name' in dl[pillar_data] else None
-                    ticker.market_cap = dl[pillar_data]['market_cap'] if 'market_cap' in dl[pillar_data] else None
-                    ticker.Eps = dl[pillar_data]['Eps'] if 'Eps' in dl[pillar_data] else None
-                    ticker.Pe = dl[pillar_data]['Pe'] if 'Pe' in dl[pillar_data] else None
-                    ticker.is_pe_acceptable = dl[pillar_data]['is_pe_acceptable'] if 'is_pe_acceptable' in dl[pillar_data] else None
-                    ticker.profit_margin = dl[pillar_data]['profit_margin'] if 'profit_margin' in dl[pillar_data] else None
-                    ticker.is_profit_margin_acceptable = dl[pillar_data]['is_profit_margin_acceptable'] if 'is_profit_margin_acceptable' in dl[pillar_data] else None
-                    ticker.latest_revenue = dl[pillar_data]['latest_revenue'] if 'latest_revenue' in dl[pillar_data] else None
-                    ticker.earliest_revenue = dl[pillar_data]['earliest_revenue'] if 'earliest_revenue' in dl[pillar_data] else None
-                    ticker.is_revenue_growing = dl[pillar_data]['is_revenue_growing'] if 'is_revenue_growing' in dl[pillar_data] else None
-                    ticker.latest_net_income = dl[pillar_data]['latest_net_income'] if 'latest_net_income' in dl[pillar_data] else None
-                    ticker.earliest_net_income = dl[pillar_data]['earliest_net_income'] if 'earliest_net_income' in dl[pillar_data] else None
-                    ticker.is_net_income_growing = dl[pillar_data]['is_net_income_growing'] if 'is_net_income_growing' in dl[pillar_data] else None
-                    ticker.latest_shares_outstanding = dl[pillar_data]['latest_shares_outstanding'] if 'latest_shares_outstanding' in dl[pillar_data] else None
-                    ticker.earliest_shares_outstanding = dl[pillar_data]['earliest_shares_outstanding'] if 'earliest_shares_outstanding' in dl[pillar_data] else None
-                    ticker.shares_outstanding = dl[pillar_data]['shares_outstanding'] if 'shares_outstanding' in dl[pillar_data] else None
-                    ticker.are_shares_outstanding_shrinking = dl[pillar_data]['are_shares_outstanding_shrinking'] if 'are_shares_outstanding_shrinking' in dl[pillar_data] else None
-                    ticker.quick_ratio = dl[pillar_data]['quick_ratio'] if 'quick_ratio' in dl[pillar_data] else None
-                    ticker.is_quick_ratio_positive = dl[pillar_data]['is_quick_ratio_positive'] if 'is_quick_ratio_positive' in dl[pillar_data] else None
-                    ticker.is_cash_flow_growing = dl[pillar_data]['is_cash_flow_growing'] if 'is_cash_flow_growing' in dl[pillar_data] else None
-                    ticker.latest_free_cash_flow = dl[pillar_data]['latest_free_cash_flow'] if 'latest_free_cash_flow' in dl[pillar_data] else None
-                    ticker.earliest_free_cash_flow = dl[pillar_data]['earliest_free_cash_flow'] if 'earliest_free_cash_flow' in dl[pillar_data] else None
-                    ticker.average_cash_flow = dl[pillar_data]['average_cash_flow'] if 'average_cash_flow' in dl[pillar_data] else None
-                    ticker.is_dividend_yield_affordable = dl[pillar_data]['is_dividend_yield_affordable'] if 'is_dividend_yield_affordable' in dl[pillar_data] else None
-                    ticker.cash_flow_value = dl[pillar_data]['cash_flow_value'] if 'cash_flow_value' in dl[pillar_data] else None
-                    ticker.is_market_price_worth = dl[pillar_data]['is_market_price_worth'] if 'is_market_price_worth' in dl[pillar_data] else None
+                    ticker.company_name = dl[pillar_data]['company_name'] if 'company_name' in dl[pillar_data] or dl[pillar_data]['company_name'] == 'null' else None
+                    ticker.market_cap = dl[pillar_data]['market_cap'] if 'market_cap' in dl[pillar_data]  or dl[pillar_data]['market_cap'] == 'null' else None
+                    ticker.Eps = dl[pillar_data]['Eps'] if 'Eps' in dl[pillar_data]  or dl[pillar_data]['Eps'] == 'null' else None
+                    ticker.Pe = dl[pillar_data]['Pe'] if 'Pe' in dl[pillar_data]  or dl[pillar_data]['Pe'] == 'null' else None
+                    ticker.is_pe_acceptable = dl[pillar_data]['is_pe_acceptable'] if 'is_pe_acceptable' in dl[pillar_data]  or dl[pillar_data]['is_pe_acceptable'] == 'null' else None
+                    ticker.profit_margin = dl[pillar_data]['profit_margin'] if 'profit_margin' in dl[pillar_data]  or dl[pillar_data]['profit_margin'] == 'null' else None
+                    ticker.is_profit_margin_acceptable = dl[pillar_data]['is_profit_margin_acceptable'] if 'is_profit_margin_acceptable' in dl[pillar_data]  or dl[pillar_data]['is_profit_margin_acceptable'] == 'null' else None
+                    ticker.latest_revenue = dl[pillar_data]['latest_revenue'] if 'latest_revenue' in dl[pillar_data]  or dl[pillar_data]['latest_revenue'] == 'null' else None
+                    ticker.earliest_revenue = dl[pillar_data]['earliest_revenue'] if 'earliest_revenue' in dl[pillar_data]  or dl[pillar_data]['earliest_revenue'] == 'null' else None
+                    ticker.is_revenue_growing = dl[pillar_data]['is_revenue_growing'] if 'is_revenue_growing' in dl[pillar_data]  or dl[pillar_data]['is_revenue_growing'] == 'null' else None
+                    ticker.latest_net_income = dl[pillar_data]['latest_net_income'] if 'latest_net_income' in dl[pillar_data]  or dl[pillar_data]['latest_net_income'] == 'null' else None
+                    ticker.earliest_net_income = dl[pillar_data]['earliest_net_income'] if 'earliest_net_income' in dl[pillar_data]  or dl[pillar_data]['earliest_net_income'] == 'null' else None
+                    ticker.is_net_income_growing = dl[pillar_data]['is_net_income_growing'] if 'is_net_income_growing' in dl[pillar_data]  or dl[pillar_data]['is_net_income_growing'] == 'null' else None
+                    ticker.latest_shares_outstanding = dl[pillar_data]['latest_shares_outstanding'] if 'latest_shares_outstanding' in dl[pillar_data]  or dl[pillar_data]['latest_shares_outstanding'] == 'null' else None
+                    ticker.earliest_shares_outstanding = dl[pillar_data]['earliest_shares_outstanding'] if 'earliest_shares_outstanding' in dl[pillar_data]  or dl[pillar_data]['earliest_shares_outstanding'] == 'null' else None
+                    ticker.shares_outstanding = dl[pillar_data]['shares_outstanding'] if 'shares_outstanding' in dl[pillar_data]  or dl[pillar_data]['shares_outstanding'] == 'null' else None
+                    ticker.are_shares_outstanding_shrinking = dl[pillar_data]['are_shares_outstanding_shrinking'] if 'are_shares_outstanding_shrinking' in dl[pillar_data]  or dl[pillar_data]['are_shares_outstanding_shrinking'] == 'null' else None
+                    ticker.quick_ratio = dl[pillar_data]['quick_ratio'] if 'quick_ratio' in dl[pillar_data]  or dl[pillar_data]['quick_ratio'] == 'null' else None
+                    ticker.is_quick_ratio_positive = dl[pillar_data]['is_quick_ratio_positive'] if 'is_quick_ratio_positive' in dl[pillar_data]  or dl[pillar_data]['is_quick_ratio_positive'] == 'null' else None
+                    ticker.is_cash_flow_growing = dl[pillar_data]['is_cash_flow_growing'] if 'is_cash_flow_growing' in dl[pillar_data]  or dl[pillar_data]['is_cash_flow_growing'] == 'null' else None
+                    ticker.latest_free_cash_flow = dl[pillar_data]['latest_free_cash_flow'] if 'latest_free_cash_flow' in dl[pillar_data]  or dl[pillar_data]['latest_free_cash_flow'] == 'null' else None
+                    ticker.earliest_free_cash_flow = dl[pillar_data]['earliest_free_cash_flow'] if 'earliest_free_cash_flow' in dl[pillar_data]  or dl[pillar_data]['earliest_free_cash_flow'] == 'null' else None
+                    ticker.average_cash_flow = dl[pillar_data]['average_cash_flow'] if 'average_cash_flow' in dl[pillar_data]  or dl[pillar_data]['average_cash_flow'] == 'null' else None
+                    ticker.is_dividend_yield_affordable = dl[pillar_data]['is_dividend_yield_affordable'] if 'is_dividend_yield_affordable' in dl[pillar_data]  or dl[pillar_data]['is_dividend_yield_affordable'] == 'null' else None
+                    ticker.cash_flow_value = dl[pillar_data]['cash_flow_value'] if 'cash_flow_value' in dl[pillar_data]  or dl[pillar_data]['cash_flow_value'] == 'null' else None
+                    ticker.is_market_price_worth = dl[pillar_data]['is_market_price_worth'] if 'is_market_price_worth' in dl[pillar_data]  or dl[pillar_data]['is_market_price_worth'] == 'null' else None
                     ticker.last_updated = timezone.now()
                     ticker.save()
                 except Exception as e:
