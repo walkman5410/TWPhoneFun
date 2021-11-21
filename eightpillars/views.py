@@ -367,7 +367,7 @@ def add_eightpillar_data(request):
                 except Exception as e:
                     logger.error(e)
                     status = 500
-                    data['message'] += 'There was an error with ' + ticker.ticker + ' ' + e + ', '
+                    data['message'] += 'There was an error with ' + ticker.ticker + ' ' + str(e) + ', '
             data['message'] += 'Upload Successful.'
         else:
             logger.error('Missing the data')
